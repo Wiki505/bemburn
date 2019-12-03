@@ -1,8 +1,6 @@
 import mysql.connector
 
-
 mysql_connector = mysql.connector.connect(user='noroot', host='192.168.88.27', password='compass', database='BEMBURN')
-
 
 class MySQL_engine():
     def __init__(self):
@@ -18,4 +16,3 @@ class MySQL_engine():
         self.cursor.execute("%s" % mysql_query)
         mysql_connector.commit()
         self.cursor.close()
-
