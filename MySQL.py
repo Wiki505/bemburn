@@ -1,6 +1,6 @@
 import mysql.connector
 
-mysql_connector = mysql.connector.connect(user='noroot', host='192.168.88.27', password='compass', database='BEMBURN')
+mysql_connector = mysql.connector.connect(user='USERNAME', host='HOST_ADDRESS', password='PASSWORD', database='DATABASE')
 
 class MySQL_engine():
     
