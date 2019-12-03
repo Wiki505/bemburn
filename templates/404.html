@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto; min-height: 100%">
+<head>
+    <meta charset="UTF-8">
+    <title>404</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1w">
+    <!--Stylesheets-->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/master_style.css')}}">
+    <!--Fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,600,700" rel="stylesheet">
+
+    <!--Script | Font Awesome-->
+    <script src="https://kit.fontawesome.com/9b3890f979.js" crossorigin="anonymous"></script>
+    <!--AMchartjs-->
+    <script src="{{url_for('static', filename='js/core.js')}}"></script>
+    <script src="{{url_for('static', filename='js/charts.js')}}"></script>
+    <script src="{{url_for('static', filename='js/animated.js')}}"></script>
+    <script src="{{url_for('static', filename='js/maps.js')}}"></script>
+    <script src="{{url_for('static', filename='js/nicaraguaLow.js')}}"></script>
+    <script src="{{url_for('static', filename='js/dark.js')}}"></script>
+</head>
+
+<body>
+
+
+    <!-- ***** Header Area Start ***** -->
+    <header class="header_area" id="">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-sm-12 col-md-12 col-lg-12 h-100">
+                    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                        <a class="navbar-brand" href="#" style="color: #fff">BEMBURN</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ml-auto">
+                              <li class="nav-item active top_header__icon responsive__link__active">
+                                  <a class="nav-link link__active social--link" href="https://github.com/bemburn"><i class="fas fa-power-off top_header link__active--responsive user_registered"></i></a>
+                              </li>
+
+                              <li class="nav-item top_header__icon responsive__link__active" style="color:#fff !important">
+                                  <a class="nav-link" href="https://github.com/bemburn"><i class="fas fa-user-astronaut" style="color: #fff !important;"></i>Welcome <span><strong>Oscar</strong>
+                                  </span></a>
+                              </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div class="container-fluid h-p100 error-body">
+        <div class="row h-p100 align-items-center error404-body">
+            <div class="col">
+                <div class="error-404-page">
+                    <div class="error-content">
+                        <div class="container">
+                            <h2 class="headline text-white">404</h2>
+                            <h3 class="margin-top-0">OPSS... PAGE NOT FOUND!</h3>
+                            <P>YOU SEEM TO BE TRYING TO FIND HIS WAY HOME</P>
+                            <div class="text-center"><a class="btn btn-info btn-block margin-top-10" href="/">Back to Bemburn</a></div>
+                        </div>
+                    </div>
+                    <footer class="error-404-footer">
+                        Copyright &copy; 2019 <a href="" class="text-white">Bemburn Machine</a>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

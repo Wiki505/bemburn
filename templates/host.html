@@ -1,0 +1,318 @@
+{% if SESSION %}
+    {% extends 'layout_online.html' %}
+{% else %}
+    {% extends 'layout_offline.html' %}
+{% endif %}
+
+{% block body  %}
+
+    <div class="hold-transition search_by_host ">
+        <!--CONTENT-->
+        <div class="content-wrapper">
+            <div class="row">
+                <!--HOSTNAME BY HOST-->
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div class="box">
+                        <div class="box-header h-group">
+                            <h3 class="box-title">Dirección IPv4: <strong><a href="http://{{ DATA[0] }}" target="_blank">{{ DATA[0] }}</a></strong></h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class=" table table-sm table-responsive table-borderless ">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col"><i class="fas fa-map-marker-alt search_by_host_icon"></i></th>
+                                      <th scope="col">País</th>
+                                      <th scope="col">{{ DATA[5] }}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody class="">
+
+                                    <tr>
+                                      <th scope="row"><i class="fas fa-map-marker-alt search_by_host_icon"></i></th>
+                                      <td>Ubicación</td>
+                                      <td>{{ DATA[6] }}</td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row"><i class="fas fa-map-marker-alt search_by_host_icon"></i></th>
+                                      <td>Geolocalización</td>
+                                      <td>Lat:{{ DATA[8] }} | Lon:{{ DATA[9] }}</td>
+                                    </tr>
+                                    <tr>
+                                    <tr>
+                                      <th scope="row"><i class="far fa-arrow-alt-circle-right search_by_host_icon"></i></th>
+                                      <td>Organización</td>
+                                      <td>{{ DATA[10] }}</td>
+                                    </tr>
+                                    <tr>
+                                    <th scope="row"><i class="fas fa-robot search_by_host_icon"></i></th>
+                                        <td>Sistema Operativo</td>
+                                        <td>{{ DATA[1] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><i class="fas fa-stopwatch search_by_host_icon"></i></th>
+                                        <td>Nombre de Dominio</td>
+                                        <td>{{ DATA[2] }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><i class="fas fa-globe search_by_host_icon"></i></th>
+                                        <td>ASN - ISP</td>
+                                        <td>{{ DATA[11] }}</td>
+                                    </tr>
+
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--GEOLOCATION BY HOST-->
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <div class="box">
+                      <div class="box-header h-group">
+                            <h2 class="box-title">Ciudad: <strong>{{ DATA[7] }}</strong>
+                      </div>
+                      <div class="box-body">
+
+                        <!--Map Code-->
+                        <script>
+                        am4core.ready(function() {
+
+                        // Themes begin
+                        am4core.useTheme(am4themes_dark);
+                        am4core.useTheme(am4themes_animated);
+                        // Themes end
+
+                        // Create map instance
+                        var chart = am4core.create("chartdiv", am4maps.MapChart);
+
+                        // Set map definition
+                        chart.geodata = am4geodata_worldLow;
+
+                        // Set projection
+                        chart.projection = new am4maps.projections.Miller();
+
+                        // Create map polygon series
+                        var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+
+                        // Exclude Antartica
+                        polygonSeries.exclude = ["AQ"];
+
+                        // Make map load polygon (like country names) data from GeoJSON
+                        polygonSeries.useGeodata = true;
+
+                        // Configure series
+                        var polygonTemplate = polygonSeries.mapPolygons.template;
+                        polygonTemplate.tooltipText = "{name}";
+                        polygonTemplate.fill = chart.colors.getIndex(0).lighten(0.5);
+
+                        // Create hover state and set alternative fill color
+                        var hs = polygonTemplate.states.create("hover");
+                        hs.properties.fill = chart.colors.getIndex(0);
+
+                        // Add image series
+                        var imageSeries = chart.series.push(new am4maps.MapImageSeries());
+                        imageSeries.mapImages.template.propertyFields.longitude = "longitude";
+                        imageSeries.mapImages.template.propertyFields.latitude = "latitude";
+                        imageSeries.data = [ {
+                          "title": "{{ DATA[7] }} | Lat:{{ DATA[8] }}, Lon:{{ DATA[9] }}",
+                          "latitude": {{ DATA[8] }},
+                          "longitude": {{ DATA[9] }}
+                        }];
+
+                        // add events to recalculate map position when the map is moved or zoomed
+                        chart.events.on( "ready", updateCustomMarkers );
+                        chart.events.on( "mappositionchanged", updateCustomMarkers );
+
+                        // this function will take current images on the map and create HTML elements for them
+                        function updateCustomMarkers( event ) {
+
+                          // go through all of the images
+                          imageSeries.mapImages.each(function(image) {
+                            // check if it has corresponding HTML element
+                            if (!image.dummyData || !image.dummyData.externalElement) {
+                              // create onex
+                              image.dummyData = {
+                                externalElement: createCustomMarker(image)
+                              };
+                            }
+
+                            // reposition the element accoridng to coordinates
+                            var xy = chart.geoPointToSVG( { longitude: image.longitude, latitude: image.latitude } );
+                            image.dummyData.externalElement.style.top = xy.y + 'px';
+                            image.dummyData.externalElement.style.left = xy.x + 'px';
+                          });
+
+                        }
+
+                        // this function creates and returns a new marker element
+                        function createCustomMarker( image ) {
+
+                          var chart = image.dataItem.component.chart;
+
+                          // create holder
+                          var holder = document.createElement( 'div' );
+                          holder.className = 'map-marker';
+                          holder.title = image.dataItem.dataContext.title;
+                          holder.style.position = 'absolute';
+
+                          // maybe add a link to it?
+                          if ( undefined != image.url ) {
+                            holder.onclick = function() {
+                              window.location.href = image.url;
+                            };
+                            holder.className += ' map-clickable';
+                          }
+
+                          // create dot
+                          var dot = document.createElement( 'div' );
+                          dot.className = 'dot';
+                          holder.appendChild( dot );
+
+                          // create pulse
+                          var pulse = document.createElement( 'div' );
+                          pulse.className = 'pulse';
+                          holder.appendChild( pulse );
+
+                          // append the marker to the map container
+                          chart.svgContainer.htmlElement.appendChild( holder );
+
+                          return holder;
+                        }
+
+                        }); // end am4core.ready()
+                        </script>
+                        <!-- HTML -->
+                        <div id="chartdiv"></div>
+                      </div>
+                    </div>
+                    <div style="clear:both"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!--CHART CVE-->
+                <div class="col-lg-6 cve_vulners">
+                    <div class="box">
+                      <div class="box-header h-group">
+                            <h3 class="box-title"><strong>Vulnerabilidades </strong>Detectadas: {{ "{:,.0f}".format(DATA[15])}}</h3>
+                      </div>
+                      <div class="box-body">
+                            <script>
+                            am4core.ready(function() {
+
+                            // Themes begin
+                            am4core.useTheme(am4themes_animated);
+                            // Themes end
+
+                            var chart = am4core.create("chartdiv1", am4charts.PieChart3D);
+                            chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+                            chart.data = [
+                            {% for data in DATA[12] %}
+                              {
+                                country: "{{ data[0] }}",
+                                litres: "{{ data[1] }}"
+                              },
+                            {% endfor %}
+                            ];
+
+                            chart.innerRadius = am4core.percent(40);
+                            chart.depth = 120;
+
+                            chart.legend = new am4charts.Legend();
+
+                            var series = chart.series.push(new am4charts.PieSeries3D());
+                            series.dataFields.value = "litres";
+                            series.dataFields.depthValue = "litres";
+                            series.dataFields.category = "country";
+                            series.slices.template.cornerRadius = 5;
+                            series.colors.step = 3;
+
+                            }); // end am4core.ready()
+                            </script>
+                        <div id="chartdiv1"></div>
+                      </div>
+                        <div style="clear:both"></div>
+                    </div>
+                </div>
+                <!--VULNERS BY HOST-->
+                <div class="col-lg-6 col-md-12 col-sm-6">
+                        <div class="box box-vulners bg-dark mb-4">
+                        <div class="box-header box-header_ports">
+                            <h3 class="box-title"><strong>Puertos</strong> Activos: <strong>{{ "{:,.0f}".format(DATA[14])}}</strong></h3>
+                        </div>
+                        <div class="box-body">
+                          <div class="table-responsive">
+                            <table class="table table-sm table-borderless" id="portsTable" width="100%" cellspacing="0">
+                              <thead>
+                                <tr>
+                                  <th>Puerto</th>
+                                  <th>Servicio</th>
+                                  <th>Producto</th>
+                                  <th>Estatus</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for data in DATA[13] %}
+                                <tr>
+                                    <td>{{ data[0] }}</td>
+                                    <td>{{ data[2] }}</td>
+                                    <td>{{ data[3] }}</td>
+                                {% if data[1] == "open" %}
+                                    <td><button type="button" class="btn btn-light">
+                                      {{ data[1]
+                                        }}
+                                    </button>
+                                {% elif data[1] == "closed" %}
+                                    </td><td><button type="button" class="btn btn-danger">
+                                      {{ data[1] }}
+                                    </button>
+                                {% elif data[1] == "filtered" %}
+                                  <td><button type="button" class="btn btn-warning">
+                                      {{ data[1] }}
+                                     </button>
+
+    	                        {% endif %}
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--FOOTER-->
+    <footer class="bottom-footer-area section-padding-80-0">
+        <!-- Main Footer Area -->
+        <div class="main-footer-area">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12 col-md-6">
+                        <!-- Copywrite Text -->
+                        <div class="copywrite-text">
+                            <p>&copy;<script>document.write(new Date().getFullYear());</script> Todos los derechos reservados | <a href="" target="_blank">Bemburn Machine</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <!-- Payment Methods -->
+                        <div class="payments-methods d-flex align-items-center">
+                            <p>Para donaciones, nuestros canales son:</p>
+                            <i class="fab fa-cc-visa search_by_host_icon" aria-hidden="true"></i>
+                            <i class="fab fa-cc-paypal search_by_host_icon" aria-hidden="true"></i>
+                            <i class="fab fa-bitcoin search_by_host_icon" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+{% endblock  %}

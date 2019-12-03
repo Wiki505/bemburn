@@ -1,0 +1,275 @@
+{% if SESSION %}
+    {% extends 'layout_online.html' %}
+{% else %}
+    {% extends 'layout_offline.html' %}
+{% endif %}
+{% block body %}
+
+<div class="hold-transition search_by_port ">
+    <div class="wrapper">
+        <div class="content-wrapper">
+            <div class="row">
+                <!--HOSTNAME BY HOST-->
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                    <div class="box">
+                        <div class="box-header h-group">
+                            <h2 class="box-title">Puerto: <strong>{{ PORT }}</strong></h2>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class=" table table-sm table-responsive table-borderless ">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col"><i class="fas fa-map-marker-alt search_by_host_icon"></i></th>
+                                      <th scope="col">Puertos Activos </th>
+                                      <th scope="col">{{ "{:,.0f}".format(DATA[0])}}</th>
+
+                                    </tr>
+                                  </thead>
+                                  <tbody class="">
+                                    <tr>
+                                      <th scope="row"><i class="fas fa-map-marker-alt search_by_host_icon"></i></th>
+                                      <td>Puertos Vulnerables</td>
+                                      <td>{{ "{:,.0f}".format(DATA[2])}}</td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row"><i class="far fa-arrow-alt-circle-right search_by_host_icon"></i></th>
+                                      <td>Vulnerabilidades Detectadas</td>
+                                      <td>{{ "{:,.0f}".format(DATA[1])}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><i class="fas fa-globe search_by_host_icon"></i></th>
+                                        <td>Organizaciones</td>
+                                        <td>{{ "{:,.0f}".format(DATA[3])}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row"><i class="fas fa-stopwatch search_by_host_icon"></i></th>
+                                        <td>Productos</td>
+                                        <td>{{ DATA[4] }}</td>
+                                    </tr>
+                                  <tr>
+                                    <th scope="row"><i class="fas fa-robot search_by_host_icon"></i></th>
+                                        <td>Sistemas Operativos</td>
+                                        <td>{{ DATA[5] }}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--GEOLOCATION BY HOST-->
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                    <div class="box">
+                      <div class="box-header h-group">
+                            <h2 class="box-title">Departamentos:  {{ DATA[6] }} </h2>
+                      </div>
+                        <!-- Chart code -->
+                        <script>
+                            am4core.ready(function() {
+
+                            // Themes begin
+                            am4core.useTheme(am4themes_animated);
+                            // Themes end
+
+                             // Create map instance
+                            var chart = am4core.create("chartdiv", am4maps.MapChart);
+
+                            // Set map definition
+                            chart.geodata = am4geodata_nicaraguaLow;
+
+                            // Set projection
+                            chart.projection = new am4maps.projections.Miller();
+
+                            // Create map polygon series
+                            var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+
+                            //Set min/max fill color for each area
+                            polygonSeries.heatRules.push({
+                              property: "fill",
+                              target: polygonSeries.mapPolygons.template,
+                              min: chart.colors.getIndex(1).brighten(0.3),
+                              max: chart.colors.getIndex(1).brighten(-0.3)
+                            });
+
+                            // Make map load polygon data (state shapes and names) from GeoJSON
+                            polygonSeries.useGeodata = true;
+
+                            // Set heatmap values for each state
+                            polygonSeries.data = [
+                            {% for region in DATA[7] %}
+                              {
+                                id: "{{ region }}",
+                                value: {{ DATA[7][region] }}
+                              },
+                              {% endfor %}
+                            ];
+
+                            // Set up heat legend
+                            let heatLegend = chart.createChild(am4maps.HeatLegend);
+                            heatLegend.series = polygonSeries;
+                            heatLegend.align = "right";
+                            heatLegend.valign = "bottom";
+                            heatLegend.width = am4core.percent(20);
+                            heatLegend.marginRight = am4core.percent(4);
+                            heatLegend.minValue = 0;
+                            heatLegend.maxValue = 10000;
+
+                            // Set up custom heat map legend labels using axis ranges
+                            var minRange = heatLegend.valueAxis.axisRanges.create();
+                            minRange.value = heatLegend.minValue;
+                            minRange.label.text = "-";
+                            var maxRange = heatLegend.valueAxis.axisRanges.create();
+                            maxRange.value = heatLegend.maxValue;
+                            maxRange.label.text = "+";
+
+                            // Blank out internal heat legend value axis labels
+                            heatLegend.valueAxis.renderer.labels.template.adapter.add("text", function(labelText) {
+                              return "";
+                            });
+
+                            // Configure series tooltip
+                            var polygonTemplate = polygonSeries.mapPolygons.template;
+                            polygonTemplate.tooltipText = "{name}: {value}";
+                            polygonTemplate.nonScalingStroke = true;
+                            polygonTemplate.strokeWidth = 0.6;
+
+
+                            // Create hover state and set alternative fill color
+                            var hs = polygonTemplate.states.create("hover");
+                            hs.properties.fill = am4core.color("#fff");
+
+                            }); // end am4core.ready()
+                        </script>
+                        <div id="chartdiv"></div>
+                    </div>
+                </div>
+                <div style="clear:both"></div>
+            </div>
+
+            <div class="row">
+                <!--CHART CVE-->
+                <div class="col-lg-6 col-md-12 col-sm-12 cve_vulners">
+                    <div class="box">
+                      <div class="box-header h-group">
+                          <h3 class=" box-title m-0 font-weight-bold">Vulnerabilidades P/Año en Puerto {{ PORT }}</h3>
+                      </div>
+                      <div class="box-body">
+                            <script>
+                            am4core.ready(function() {
+
+                            // Themes begin
+                am4core.useTheme(am4themes_dark)
+                            am4core.useTheme(am4themes_animated);
+                            // Themes end
+
+                            var chart = am4core.create("chartdiv1", am4charts.PieChart3D);
+                            chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+                            chart.data = [
+                            {% for data in DATA[8] %}
+                              {
+                                country: "{{ data[0] }}",
+                                litres: "{{ data[1] }}"
+                              },
+                            {% endfor %}
+                            ];
+
+                            chart.innerRadius = am4core.percent(40);
+                            chart.depth = 120;
+
+                            chart.legend = new am4charts.Legend();
+
+                            var series = chart.series.push(new am4charts.PieSeries3D());
+                            series.dataFields.value = "litres";
+                            series.dataFields.depthValue = "litres";
+                            series.dataFields.category = "country";
+                            series.slices.template.cornerRadius = 5;
+                            series.colors.step = 3;
+
+                            }); // end am4core.ready()
+                            </script>
+                        <div id="chartdiv1"></div>
+                      </div>
+                        <div style="clear:both"></div>
+                    </div>
+                </div>
+                <!--VULNERS BY HOST-->
+                <div class="col-lg-6 col-md-12 col-sm-12">
+                        <div class="box box-vulners bg-dark mb-4">
+                        <div class="box-header box-header_ports">
+                              <h3 class=" box-title m-0 font-weight-bold">Servicios Activos en Puerto: {{ PORT }}</h3>
+                        </div>
+                        <div class="box-body">
+                          <div class="table-responsive">
+                            <table class="table table-borderless" id="portsTable" width="100%" cellspacing="0">
+                                                            <thead>
+                                <tr>
+                                  <th>Dirección</th>
+                                  <th>Sistema Operativo</th>
+                                  <th>Producto</th>
+                                  <th>Estatus</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for data in DATA[9] %}
+                                <tr>
+                                    <td><a href="/host/{{ data[0] }}" target="_blank">{{ data[0] }}</a></td>
+                                    <td>{{ data[1] }}</td>
+                                    <td>{{ data[2] }}</td>
+                                {% if data[3] == "open" %}
+                                    <td><button type="button" class="btn btn-light">
+                                      {{ data[3]
+                                        }}
+                                    </button>
+                                {% elif data[3] == "closed" %}
+                                    </td><td><button type="button" class="btn btn-danger">
+                                      {{ data[3] }}
+                                    </button>
+                                {% elif data[3] == "filtered" %}
+                                  <td><button type="button" class="btn btn-warning">
+                                      {{ data[3] }}
+                                     </button>
+
+                                {% endif %}
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--FOOTER-->
+    <footer class="bottom-footer-area section-padding-80-0">
+        <!-- Main Footer Area -->
+        <div class="main-footer-area">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12 col-md-6">
+                        <!-- Copywrite Text -->
+                        <div class="copywrite-text">
+                            <p>&copy;<script>document.write(new Date().getFullYear());</script> Todos los derechos reservados | <a href="" target="_blank">Bemburn Machine</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <!-- Payment Methods -->
+                        <div class="payments-methods d-flex align-items-center">
+                            <p>Para donaciones, nuestros canales son:</p>
+                            <i class="fab fa-cc-visa search_by_host_icon" aria-hidden="true"></i>
+                            <i class="fab fa-cc-paypal search_by_host_icon" aria-hidden="true"></i>
+                            <i class="fab fa-bitcoin search_by_host_icon" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

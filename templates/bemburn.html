@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bemburn Machine</title>
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1w">
+    <!--Stylesheets-->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'css/master_style.css')}}">
+    <!--Fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,600,700" rel="stylesheet">
+
+    <!--Script | Font Awesome-->
+    <script src="https://kit.fontawesome.com/9b3890f979.js" crossorigin="anonymous"></script>
+    <!--AMchartjs-->
+    <script src="{{url_for('static', filename='js/core.js')}}"></script>
+    <script src="{{url_for('static', filename='js/charts.js')}}"></script>
+    <script src="{{url_for('static', filename='js/animated.js')}}"></script>
+    <script src="{{url_for('static', filename='js/maps.js')}}"></script>
+    <script src="{{url_for('static', filename='js/nicaraguaLow.js')}}"></script>
+    <script src="{{url_for('static', filename='js/dark.js')}}"></script>
+</head>
+
+<body>
+
+    <!-- ***** Header Area Start ***** -->
+    <header class="header_area" id="">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-sm-12 col-md-12 col-lg-12 h-100">
+                    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                        <a class="navbar-brand" href="/" style="color: #fff">BEMBURN</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                            <ul class="navbar-nav ml-auto">
+                              <li class="nav-item active top_header__icon responsive__link__active">
+                                  <a class="nav-link link__active social--link" href="/logout"><i class="fas fa-power-off top_header link__active--responsive user_registered"></i></a>
+                              </li>
+
+                              <li class="nav-item top_header__icon responsive__link__active" style="color:#fff !important">
+                                  <a class="nav-link" href="#"><i class="fas fa-user-astronaut" style="color: #fff !important;"></i><span><strong>{{ USER }}</strong>
+                                  </span></a>
+                              </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+<!--Start Search Engine Section-->
+<div class="wrapper search_engine">
+     <div class ="content-wrapper">	
+	<section id="index">
+	    <div class="search-area">
+	        <div class="single_search d-flex align-items-center justify-content-center">
+	            <div class="container">
+	                <div class="row align-items-center justify-content-center">
+	                    <div class="logo-search-engine">
+	                        <img class="logo img-fluid" src="{{url_for('static', filename='images/Logo-Bemburn-Machine.png')}}">
+	                    </div>
+	                    <div class="col-xl-10 mb-100">
+	                        <div class="search_query">
+	                            <div class="search_query_custom">
+	                                <div class="form-group">
+	                                    <form action="/search" class="search_query_form">
+	                                        <input class="search_query" type="search" name="query" placeholder="Buscar" autocomplete="off" maxlength="255">
+	                                        <button type="submit" class="search_query_button"><span class="form-control-feedback">
+	                                    <i class="fas fa-search search_query_icon"></i></span></button>
+	                                    </form>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="search_query_text text-center">
+	                            <p>Conoce sobre todos los dispositivo conectados a internet</p>
+	                        </div>
+	                    </div>
+	                    <div class="col-xl-8">
+	                      {% with messages = get_flashed_messages()  %}
+	                      {% if messages %}
+	                      {% for message in messages %}
+	                      <div class="alert alert-success alert-dismissible fade show" role="alert" style="background: #F20732; color: #fff; border-color:#F20732;">
+	                        {{ message }}
+	                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	                          <span aria-hidden="true">&times;</span>
+	                        </button>
+	                      </div>
+	                      {% endfor %}
+	                      {% endif %}
+	                      {% endwith %}
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</section>
+    </div>
+</div>
+
+<!--End Search Engine Section-->
+
+    <!--Script Source Files-->
+    <script src="{{url_for('static', filename='js/jquery-2.2.4.min.js')}}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='js/popper.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/template.js')}}"></script>
+    <script src="{{url_for('static', filename='js/plugins.js')}}"></script>
+    <script src="{{url_for('static', filename='js/active.js')}}"></script>
+    <!--Data Table-->
+    <script src="{{url_for('static', filename='js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/datatables-demo.js')}}"></script>
+
+</body>
+</html>
+
