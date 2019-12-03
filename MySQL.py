@@ -3,6 +3,7 @@ import mysql.connector
 mysql_connector = mysql.connector.connect(user='noroot', host='192.168.88.27', password='compass', database='BEMBURN')
 
 class MySQL_engine():
+    """ This class define the MySQL process for al engine """
     def __init__(self):
         self.cursor = mysql_connector.cursor()
 
