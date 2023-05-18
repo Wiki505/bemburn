@@ -11,8 +11,8 @@ def email_confirmation(server,email, id_string):
         "MAIL_PORT": 465,
         "MAIL_USE_SSL": True,
         "MAIL_USE_TSL": False,
-        "MAIL_USERNAME": 'bemburnmachine@gmail.com',
-        "MAIL_PASSWORD": 'PTUEyS9hkucuRyj'}
+        "MAIL_USERNAME": '@gmail.com',
+        "MAIL_PASSWORD": ''}
     server.config.update(mail_settings)
 
     mail = Mail()
