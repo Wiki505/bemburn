@@ -28,7 +28,7 @@ def email_confirmation(server,email, id_string):
                   Gracias por utilizar los servicios de Bemburn, has click en el enlace para validar tu cuenta.
                   ---> http://192.168.88.27:1080/account_validation/%s
                   
-                  Para mayor información: +505 7871 4878 | +505 5846 9596 | bemburnmachine@gmail.com
+                  Para mayor información: +505  | +505  | @gmail.com
                   """ % url_validation)
     server_mail.send(msg)
 
